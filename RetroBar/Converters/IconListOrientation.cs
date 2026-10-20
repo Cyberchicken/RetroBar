@@ -1,4 +1,4 @@
-﻿using ManagedShell.AppBar;
+using ManagedShell.AppBar;
 using RetroBar.Utilities;
 using System.Windows.Controls;
 using System;
@@ -11,8 +11,10 @@ namespace RetroBar.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            bool horizontal = Settings.Instance.Edge is AppBarEdge.Top or AppBarEdge.Bottom;
-            int rows = Settings.Instance.RowCount;
+            // Orientation of the hosting window (can differ per monitor)
+            bool horizontal = values.Length > 0 && values[0] is Orientation windowOrientation ? windowOrientation == Orientation.Horizontal : Settings.Instance.Edge is AppBarEdge.Top or AppBarEdge.Bottom;
+            // Rows of the hosting window (can differ per monitor)
+            int rows = values.Length > 1 && values[1] is int windowRows ? windowRows : Settings.Instance.RowCount;
 
             if (horizontal && rows > 1)
             {

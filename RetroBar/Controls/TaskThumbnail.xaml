@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="RetroBar.Controls.TaskThumbnail"
+<UserControl x:Class="RetroBar.Controls.TaskThumbnail"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:converters="clr-namespace:RetroBar.Converters"
@@ -10,6 +10,7 @@
              Unloaded="UserControl_Unloaded">
     <UserControl.Resources>
         <converters:ToolTipHorizontalOffsetConverter x:Key="toolTipHorizontalOffsetConverter" />
+        <converters:TaskbarEdgeConverter x:Key="taskbarEdgeConverter" />
         <s:Double x:Key="ConstantScale">1.0</s:Double>
     </UserControl.Resources>
     <UserControl.ToolTip>
@@ -28,12 +29,13 @@
                                 <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
                                 <Binding Source="{StaticResource ConstantScale}"/>
                                 <Binding Source="{x:Static utilities:Settings.Instance}" Path="Edge"/>
+                                <Binding RelativeSource="{RelativeSource Self}" Path="PlacementTarget"/>
                             </MultiBinding>
                         </Setter.Value>
                     </Setter>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Source={x:Static utilities:Settings.Instance}, Path=Edge, UpdateSourceTrigger=PropertyChanged}"
-                                     Value="1">
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget, Converter={StaticResource taskbarEdgeConverter}}"
+                                     Value="Top">
                             <DataTrigger.Setters>
                                 <Setter Property="Placement"
                                         Value="Bottom" />

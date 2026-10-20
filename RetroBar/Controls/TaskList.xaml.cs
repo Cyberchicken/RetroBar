@@ -1,4 +1,4 @@
-﻿using ManagedShell.AppBar;
+using ManagedShell.AppBar;
 using ManagedShell.WindowsTasks;
 using ManagedShell.Common.Helpers;
 using RetroBar.Utilities;
@@ -22,6 +22,40 @@ namespace RetroBar.Controls
         private double TaskButtonLeftMargin;
         private double TaskButtonRightMargin;
         private ICollectionView taskbarItems;
+
+        // Where each row (column when vertical) of buttons sits in the free space
+        public static DependencyProperty ButtonsAlignmentProperty = DependencyProperty.Register(nameof(ButtonsAlignment), typeof(TaskButtonsAlignmentOption), typeof(TaskList), new PropertyMetadata(TaskButtonsAlignmentOption.Start));
+
+        // Stagger the rows of buttons like keyboard rows (horizontal taskbars only)
+        public static DependencyProperty StaggerRowsProperty = DependencyProperty.Register(nameof(StaggerRows), typeof(bool), typeof(TaskList), new PropertyMetadata(false, OnStaggerChanged));
+
+        public bool StaggerRows
+        {
+            get { return (bool)GetValue(StaggerRowsProperty); }
+            set { SetValue(StaggerRowsProperty, value); }
+        }
+
+        public static DependencyProperty StaggerActiveProperty = DependencyProperty.Register(nameof(StaggerActive), typeof(bool), typeof(TaskList), new PropertyMetadata(false));
+
+        public bool StaggerActive
+        {
+            get { return (bool)GetValue(StaggerActiveProperty); }
+            set { SetValue(StaggerActiveProperty, value); }
+        }
+
+        private static void OnStaggerChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is TaskList list)
+            {
+                list.StaggerActive = list.StaggerRows && !TaskbarContext.IsVertical(list);
+            }
+        }
+
+        public TaskButtonsAlignmentOption ButtonsAlignment
+        {
+            get { return (TaskButtonsAlignmentOption)GetValue(ButtonsAlignmentProperty); }
+            set { SetValue(ButtonsAlignmentProperty, value); }
+        }
 
         public static DependencyProperty ButtonWidthProperty = DependencyProperty.Register(nameof(ButtonWidth), typeof(double), typeof(TaskList), new PropertyMetadata(new double()));
 
@@ -76,7 +110,7 @@ namespace RetroBar.Controls
             MinButtonWidth = Application.Current.FindResource("TaskButtonMinWidth") as double? ?? 0;
             Thickness buttonMargin;
 
-            if (Settings.Instance.Edge == AppBarEdge.Left || Settings.Instance.Edge == AppBarEdge.Right)
+            if (TaskbarContext.IsVertical(this))
             {
                 buttonMargin = Application.Current.FindResource("TaskButtonVerticalMargin") as Thickness? ?? new Thickness();
             }
@@ -240,7 +274,10 @@ namespace RetroBar.Controls
             if (Host is null)
                 return; // The state is trashed, but presumably it's just a transition
 
-            if (Settings.Instance.Edge == AppBarEdge.Left || Settings.Instance.Edge == AppBarEdge.Right)
+            // The orientation may have changed
+            StaggerActive = StaggerRows && !TaskbarContext.IsVertical(this);
+
+            if (TaskbarContext.IsVertical(this))
             {
                 ExtraWidthCount = 0;
                 ButtonWidth = ActualWidth;
@@ -249,7 +286,7 @@ namespace RetroBar.Controls
             }
 
             double height = ActualHeight;
-            int rows = Host.Rows;
+            int rows = Host.TaskRows;
 
             int taskCount = TasksList.Items.Count;
             TasksList.AlternationCount = taskCount; // keep in sync for correct AlternationIndex

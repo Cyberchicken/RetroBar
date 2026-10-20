@@ -309,10 +309,18 @@ namespace RetroBar.Utilities
         public int RowCount
         {
             get => _rowCount;
-            set => Set(ref _rowCount, value);
+            set
+            {
+                Set(ref _rowCount, value);
+
+                if (value < 2 && Edge is AppBarEdge.Top or AppBarEdge.Bottom)
+                {
+                    LeaveQuickLaunchOwnRow();
+                }
+            }
         }
 
-        private int _rowLimit = 5;
+        private int _rowLimit = 20;
         public int RowLimit
         {
             get => _rowLimit;
@@ -323,10 +331,28 @@ namespace RetroBar.Utilities
         public int TaskbarWidth
         {
             get => _taskbarWidth;
-            set => Set(ref _taskbarWidth, value);
+            set
+            {
+                Set(ref _taskbarWidth, value);
+
+                if (value < 2 && Edge is AppBarEdge.Left or AppBarEdge.Right)
+                {
+                    LeaveQuickLaunchOwnRow();
+                }
+            }
         }
 
-        private int _taskbarWidthLimit = 7;
+        // Without room for an own row, move the Quick Launch back to the start of the taskbar
+        // (the counterpart of adding a row when an own row is chosen).
+        private void LeaveQuickLaunchOwnRow()
+        {
+            if (!_isInitializing && _quickLaunchPosition is QuickLaunchPositionOption.OwnRowScreenEdge or QuickLaunchPositionOption.OwnRowScreenCenter)
+            {
+                QuickLaunchPosition = QuickLaunchPositionOption.StartOfTaskbar;
+            }
+        }
+
+        private int _taskbarWidthLimit = 20;
         public int TaskbarWidthLimit
         {
             get => _taskbarWidthLimit;
@@ -338,6 +364,45 @@ namespace RetroBar.Utilities
         {
             get => _quickLaunchOrder;
             set => Set(ref _quickLaunchOrder, value);
+        }
+
+        // With more than one row, fill the Quick Launch row by row (left to right) instead of column by column.
+        private bool _quickLaunchFillRowsFirst = false;
+        public bool QuickLaunchFillRowsFirst
+        {
+            get => _quickLaunchFillRowsFirst;
+            set => Set(ref _quickLaunchFillRowsFirst, value);
+        }
+
+        private QuickLaunchPositionOption _quickLaunchPosition = QuickLaunchPositionOption.StartOfTaskbar;
+        public QuickLaunchPositionOption QuickLaunchPosition
+        {
+            get => _quickLaunchPosition;
+            set => SetEnum(ref _quickLaunchPosition, value);
+        }
+
+        // Size in pixels of the Quick Launch icons
+        private int _quickLaunchIconSize = 16;
+        public int QuickLaunchIconSize
+        {
+            get => _quickLaunchIconSize;
+            set => Set(ref _quickLaunchIconSize, value);
+        }
+
+        // Where each row (column when vertical) of task buttons sits in the free space: start (as before), center (like Windows 11) or end
+        private TaskButtonsAlignmentOption _taskButtonsAlignment = TaskButtonsAlignmentOption.Start;
+        public TaskButtonsAlignmentOption TaskButtonsAlignment
+        {
+            get => _taskButtonsAlignment;
+            set => SetEnum(ref _taskButtonsAlignment, value);
+        }
+
+        // Stagger the rows of task buttons like keyboard rows, so that they are easier to tell apart
+        private bool _staggerTaskButtons = false;
+        public bool StaggerTaskButtons
+        {
+            get => _staggerTaskButtons;
+            set => Set(ref _staggerTaskButtons, value);
         }
 
         private bool _showTaskThumbnails = false;
@@ -488,6 +553,191 @@ namespace RetroBar.Utilities
             get => _allowBlurBehind;
             set => Set(ref _allowBlurBehind, value);
         }
+
+        private bool _showStartButton = true;
+        public bool ShowStartButton
+        {
+            get => _showStartButton;
+            set => Set(ref _showStartButton, value);
+        }
+
+        private bool _showNotifyIcons = true;
+        public bool ShowNotifyIcons
+        {
+            get => _showNotifyIcons;
+            set => Set(ref _showNotifyIcons, value);
+        }
+
+        // When enabled (and ShowMultiMon is on), MonitorOverrides apply; otherwise every taskbar uses the global settings.
+        private bool _configureTaskbarsSeparately = true;
+        public bool ConfigureTaskbarsSeparately
+        {
+            get => _configureTaskbarsSeparately;
+            set => Set(ref _configureTaskbarsSeparately, value);
+        }
+
+        // Per-monitor overrides. Values left null fall back to the global settings above.
+        private List<MonitorOverride> _monitorOverrides = [];
+        public List<MonitorOverride> MonitorOverrides
+        {
+            get => _monitorOverrides;
+            set => Set(ref _monitorOverrides, value ?? []);
+        }
+        #endregion
+
+        #region Per-monitor resolution
+        public bool UseMonitorOverrides => ShowMultiMon && ConfigureTaskbarsSeparately;
+
+        private MonitorOverride FindOverride(string monitorId)
+        {
+            if (!UseMonitorOverrides || string.IsNullOrEmpty(monitorId))
+            {
+                return null;
+            }
+
+            return _monitorOverrides.Find(o => o?.Monitor != null && string.Equals(o.Monitor, monitorId, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static string GetMonitorId(AppBarScreen screen)
+        {
+            return screen == null ? null : MonitorIdentifier.GetMonitorId(screen.DeviceName);
+        }
+
+        // Screen-based getters, used by the taskbars.
+        public int GetRowCount(AppBarScreen screen) => GetRowCount(GetMonitorId(screen));
+        public bool GetShowStartButton(AppBarScreen screen) => GetShowStartButton(GetMonitorId(screen), screen?.Primary ?? true);
+        public bool GetShowQuickLaunch(AppBarScreen screen) => GetShowQuickLaunch(GetMonitorId(screen));
+        public bool GetShowNotifyIcons(AppBarScreen screen) => GetShowNotifyIcons(GetMonitorId(screen));
+        public bool GetShowClock(AppBarScreen screen) => GetShowClock(GetMonitorId(screen));
+        public QuickLaunchPositionOption GetQuickLaunchPosition(AppBarScreen screen) => GetQuickLaunchPosition(GetMonitorId(screen));
+        public int GetQuickLaunchIconSize(AppBarScreen screen) => GetQuickLaunchIconSize(GetMonitorId(screen));
+        public string GetQuickLaunchPath(AppBarScreen screen) => GetQuickLaunchPath(GetMonitorId(screen));
+        public bool GetQuickLaunchFillRowsFirst(AppBarScreen screen) => GetQuickLaunchFillRowsFirst(GetMonitorId(screen));
+        public TaskButtonsAlignmentOption GetTaskButtonsAlignment(AppBarScreen screen) => GetTaskButtonsAlignment(GetMonitorId(screen));
+        public TaskButtonsAlignmentOption GetTaskButtonsAlignment(string monitorId) => FindOverride(monitorId)?.TaskButtonsAlignment ?? TaskButtonsAlignment;
+        public bool GetStaggerTaskButtons(AppBarScreen screen) => GetStaggerTaskButtons(GetMonitorId(screen));
+        public bool GetStaggerTaskButtons(string monitorId) => FindOverride(monitorId)?.StaggerTaskButtons ?? StaggerTaskButtons;
+        // On vertical taskbars this fills columns first instead (the opposite of the default, as on horizontal ones)
+        public bool GetQuickLaunchFillRowsFirst(string monitorId) => FindOverride(monitorId)?.QuickLaunchFillRowsFirst ?? QuickLaunchFillRowsFirst;
+        public bool GetShowDesktopButton(AppBarScreen screen) => GetShowDesktopButton(GetMonitorId(screen));
+        public bool GetShowInputLanguage(AppBarScreen screen) => GetShowInputLanguage(GetMonitorId(screen));
+        public bool GetAutoHide(AppBarScreen screen) => GetAutoHide(GetMonitorId(screen));
+        public double GetTaskbarScale(AppBarScreen screen) => GetTaskbarScale(GetMonitorId(screen));
+        public AppBarEdge GetEdge(AppBarScreen screen) => GetEdge(GetMonitorId(screen));
+        public int GetTaskbarWidth(AppBarScreen screen) => GetTaskbarWidth(GetMonitorId(screen));
+
+        public string GetQuickLaunchPath(string monitorId)
+        {
+            string path = FindOverride(monitorId)?.QuickLaunchPath;
+            return string.IsNullOrEmpty(path) ? QuickLaunchPath : path;
+        }
+
+        public bool GetShowDesktopButton(string monitorId) => FindOverride(monitorId)?.ShowDesktopButton ?? ShowDesktopButton;
+        public bool GetShowInputLanguage(string monitorId) => FindOverride(monitorId)?.ShowInputLanguage ?? ShowInputLanguage;
+        public bool GetAutoHide(string monitorId) => FindOverride(monitorId)?.AutoHide ?? AutoHide;
+        public double GetTaskbarScale(string monitorId) => FindOverride(monitorId)?.TaskbarScale ?? TaskbarScale;
+        public AppBarEdge GetEdge(string monitorId) => FindOverride(monitorId)?.Edge ?? Edge;
+        public int GetTaskbarWidth(string monitorId) => FindOverride(monitorId)?.TaskbarWidth ?? TaskbarWidth;
+
+        // Changes a setting for the screen's taskbar: its own entry when taskbars are configured separately, else the global setting.
+        public void SetForScreen(AppBarScreen screen, Action<MonitorOverride> perMonitor, Action global)
+        {
+            string monitorId = GetMonitorId(screen);
+
+            if (UseMonitorOverrides && !string.IsNullOrEmpty(monitorId))
+            {
+                SetMonitorOverride(monitorId, perMonitor);
+            }
+            else
+            {
+                global();
+            }
+        }
+
+        public int GetQuickLaunchIconSize(string monitorId)
+        {
+            return FindOverride(monitorId)?.QuickLaunchIconSize ?? QuickLaunchIconSize;
+        }
+
+        public QuickLaunchPositionOption GetQuickLaunchPosition(string monitorId)
+        {
+            return FindOverride(monitorId)?.QuickLaunchPosition ?? QuickLaunchPosition;
+        }
+
+        // Monitor ID-based getters: the monitor's own setting if it has one, else the global (default) setting.
+        public int GetRowCount(string monitorId)
+        {
+            return FindOverride(monitorId)?.RowCount ?? RowCount;
+        }
+
+        public bool GetShowStartButton(string monitorId, bool primary)
+        {
+            return FindOverride(monitorId)?.ShowStartButton ?? (ShowStartButton && (primary || ShowStartButtonMultiMon));
+        }
+
+        public bool GetShowQuickLaunch(string monitorId)
+        {
+            return FindOverride(monitorId)?.ShowQuickLaunch ?? ShowQuickLaunch;
+        }
+
+        public bool GetShowNotifyIcons(string monitorId)
+        {
+            return FindOverride(monitorId)?.ShowNotifyIcons ?? ShowNotifyIcons;
+        }
+
+        public bool GetShowClock(string monitorId)
+        {
+            return FindOverride(monitorId)?.ShowClock ?? ShowClock;
+        }
+
+        public void SetRowCount(AppBarScreen screen, int value)
+        {
+            string monitorId = GetMonitorId(screen);
+
+            if (!UseMonitorOverrides || string.IsNullOrEmpty(monitorId))
+            {
+                RowCount = value;
+                return;
+            }
+
+            if (GetRowCount(monitorId) != value)
+            {
+                SetMonitorOverride(monitorId, o => o.RowCount = value);
+            }
+        }
+
+        // Changes the settings of one monitor, creating its entry if needed.
+        public void SetMonitorOverride(string monitorId, Action<MonitorOverride> change)
+        {
+            if (string.IsNullOrEmpty(monitorId))
+            {
+                return;
+            }
+
+            List<MonitorOverride> list = new List<MonitorOverride>(_monitorOverrides);
+            MonitorOverride target = list.Find(o => o?.Monitor != null && string.Equals(o.Monitor, monitorId, StringComparison.OrdinalIgnoreCase));
+
+            if (target == null)
+            {
+                target = new MonitorOverride { Monitor = monitorId };
+                list.Add(target);
+            }
+
+            change(target);
+
+            // A single-row taskbar has no room for an own Quick Launch row: move it back to the start
+            bool horizontal = (target.Edge ?? Edge) is AppBarEdge.Top or AppBarEdge.Bottom;
+            int size = horizontal ? target.RowCount ?? RowCount : target.TaskbarWidth ?? TaskbarWidth;
+
+            if (size < 2 &&
+                (target.QuickLaunchPosition ?? QuickLaunchPosition) is QuickLaunchPositionOption.OwnRowScreenEdge or QuickLaunchPositionOption.OwnRowScreenCenter)
+            {
+                target.QuickLaunchPosition = QuickLaunchPositionOption.StartOfTaskbar;
+            }
+
+            // Replace the list so that the change is notified and saved.
+            MonitorOverrides = list;
+        }
         #endregion
 
         #region Old Properties
@@ -567,6 +817,21 @@ namespace RetroBar.Utilities
         OpenNotificationCenter,
     }
 
+    public enum TaskButtonsAlignmentOption
+    {
+        Start,
+        Center,
+        End
+    }
+
+    public enum QuickLaunchPositionOption
+    {
+        StartOfTaskbar,     // Next to the Start button
+        EndOfTaskbar,       // Next to the notification area
+        OwnRowScreenEdge,   // Own row (or column) between the task buttons and the screen edge
+        OwnRowScreenCenter  // Own row (or column) between the task buttons and the screen center
+    }
+
     public enum WinNumHotkeysOption
     {
         WindowsDefault,
@@ -580,6 +845,31 @@ namespace RetroBar.Utilities
         AlwaysHide,
         AlwaysShow,
         Remove
+    }
+    #endregion
+
+    #region Classes
+    public class MonitorOverride
+    {
+        // Monitor ID from MonitorIdentifier, e.g. DELA021-C440169S0YJL
+        public string Monitor { get; set; }
+        public int? RowCount { get; set; }
+        public bool? ShowQuickLaunch { get; set; }
+        public bool? ShowStartButton { get; set; }
+        public bool? ShowNotifyIcons { get; set; }
+        public bool? ShowClock { get; set; }
+        public QuickLaunchPositionOption? QuickLaunchPosition { get; set; }
+        public int? QuickLaunchIconSize { get; set; }
+        public bool? QuickLaunchFillRowsFirst { get; set; }
+        public TaskButtonsAlignmentOption? TaskButtonsAlignment { get; set; }
+        public bool? StaggerTaskButtons { get; set; }
+        public string QuickLaunchPath { get; set; }
+        public bool? ShowDesktopButton { get; set; }
+        public bool? ShowInputLanguage { get; set; }
+        public bool? AutoHide { get; set; }
+        public double? TaskbarScale { get; set; }
+        public AppBarEdge? Edge { get; set; }
+        public int? TaskbarWidth { get; set; }
     }
     #endregion
 

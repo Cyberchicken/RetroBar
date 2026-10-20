@@ -36,6 +36,48 @@
     <s:String x:Key="show_quick_launch">Mostra A_vvio veloce</s:String>
     <s:String x:Key="select_location">Cam_bia cartella...</s:String>
     <s:String x:Key="quick_launch_folder">Avvio veloce - Selezione cartella</s:String>
+    <s:String x:Key="quick_launch_location">Cartella di Avvio veloce:</s:String>
+    <s:String x:Key="taskbar_layout_tip">Numero di righe, e se mostrare il pulsante Start, Avvio veloce, le icone di notifica e l'orologio.</s:String>
+    <s:String x:Key="taskbar_layout_title">Disposizione della barra</s:String>
+    <s:String x:Key="taskbar_layout_monitor">_Barra:</s:String>
+    <s:String x:Key="taskbar_layout_primary_suffix">(principale)</s:String>
+    <s:String x:Key="taskbar_layout_default">Predefinito per gli altri schermi</s:String>
+    <s:String x:Key="taskbar_layout_items">Mostra</s:String>
+    <s:String x:Key="show_start_button">Mostra il pulsante _Start</s:String>
+    <s:String x:Key="taskbar_layout_rows_limit_tip">Il massimo è RowLimit in settings.json (predefinito 20). Per alzarlo chiudi RetroBar, modifica il file e riavvia RetroBar.</s:String>
+    <s:String x:Key="taskbar_layout_width_limit_tip">Un'unità è l'altezza di una riga aggiunta alla larghezza base del tema. Il massimo è TaskbarWidthLimit in settings.json (predefinito 20). Per alzarlo chiudi RetroBar, modifica il file e riavvia RetroBar.</s:String>
+    <s:String x:Key="retrobar_tab">RetroBar</s:String>
+    <s:String x:Key="customize_layout">Personalizza _disposizione...</s:String>
+    <s:String x:Key="task_buttons_alignment">_Pulsanti delle finestre:</s:String>
+    <s:String x:Key="toolbar_open_folder">_Apri cartella</s:String>
+    <s:String x:Key="stagger_task_buttons">S_fasa le righe dei pulsanti</s:String>
+    <s:String x:Key="stagger_task_buttons_tip">Con più righe piene, i pulsanti di ogni riga sono sfasati come i tasti di una tastiera, così le righe si distinguono meglio. Le righe mantengono la loro larghezza.</s:String>
+    <x:Array x:Key="task_buttons_alignment_values" Type="s:String">
+        <s:String>Inizio</s:String>
+        <s:String>Centro</s:String>
+        <s:String>Fine</s:String>
+    </x:Array>
+    <s:String x:Key="layout_item_start">Pulsante _Start</s:String>
+    <s:String x:Key="layout_item_quick_launch">A_vvio veloce</s:String>
+    <s:String x:Key="layout_item_notify_icons">Icone di _notifica (area della tray)</s:String>
+    <s:String x:Key="layout_item_clock">_Orologio</s:String>
+    <s:String x:Key="layout_item_show_desktop">Pulsante &quot;Mostra _desktop&quot;</s:String>
+    <s:String x:Key="layout_item_input_language">_Lingua di input</s:String>
+    <s:String x:Key="taskbar_layout_scale">Sc_ala (%):</s:String>
+    <s:String x:Key="taskbar_layout_scale_tip">Dimensione di tutta la barra, dal 100% al 200%. I valori in grassetto danno il risultato più nitido.</s:String>
+    <s:String x:Key="quick_launch_icon_size">Dimen_sione icone:</s:String>
+    <s:String x:Key="quick_launch_icon_size_tip">Dimensione delle icone di Avvio veloce in pixel (16 = normale). Le dimensioni in grassetto (16, 32, 48, 256) sono le più nitide: Windows le ha già pronte. Icone più alte di una riga lasciano spazio a meno righe di icone; quelle che non ci stanno restano nascoste.</s:String>
+    <s:String x:Key="configure_taskbars_separately">_Configura ogni barra separatamente</s:String>
+    <s:String x:Key="quick_launch_fill_columns_first">Riempi Avvio veloce per _colonne (dall'alto in basso)</s:String>
+    <s:String x:Key="quick_launch_fill_rows_first">Riempi Avvio veloce per _righe (da sinistra a destra)</s:String>
+    <s:String x:Key="quick_launch_position">_Posizione di Avvio veloce:</s:String>
+    <s:String x:Key="quick_launch_position_tip">Una riga propria richiede almeno due righe (o larghezza due sulle barre verticali): sceglierla aggiunge una riga, e tornare a una riga riporta Avvio veloce all'inizio della barra.</s:String>
+    <x:Array x:Key="quick_launch_position_values" Type="s:String">
+        <s:String>Inizio della barra</s:String>
+        <s:String>Fine della barra</s:String>
+        <s:String>Riga propria, verso il bordo</s:String>
+        <s:String>Riga propria, verso il centro</s:String>
+    </x:Array>
     <s:String x:Key="show_badges">Mostra badge di notifica</s:String>
     <s:String x:Key="show_window_previews">Mostra anteprime delle finestre (miniature)</s:String>
     <s:String x:Key="use_software_rendering">_Usa rendering software</s:String>

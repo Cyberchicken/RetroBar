@@ -36,6 +36,48 @@
     <s:String x:Key="show_quick_launch">Show _Quick Launch</s:String>
     <s:String x:Key="select_location">_Select location...</s:String>
     <s:String x:Key="quick_launch_folder">Quick Launch - Choose a folder</s:String>
+    <s:String x:Key="quick_launch_location">Quick Launch folder:</s:String>
+    <s:String x:Key="taskbar_layout_tip">Number of rows, and whether to show the Start button, Quick Launch, notification icons and clock.</s:String>
+    <s:String x:Key="taskbar_layout_title">Taskbar Layout</s:String>
+    <s:String x:Key="taskbar_layout_monitor">_Taskbar:</s:String>
+    <s:String x:Key="taskbar_layout_primary_suffix">(primary)</s:String>
+    <s:String x:Key="taskbar_layout_default">Default for other displays</s:String>
+    <s:String x:Key="taskbar_layout_items">Show</s:String>
+    <s:String x:Key="show_start_button">Show _Start button</s:String>
+    <s:String x:Key="taskbar_layout_rows_limit_tip">The maximum is RowLimit in settings.json (default 20). To raise it, close RetroBar, edit the file and start RetroBar again.</s:String>
+    <s:String x:Key="taskbar_layout_width_limit_tip">One unit is one row height added to the theme's base width. The maximum is TaskbarWidthLimit in settings.json (default 20). To raise it, close RetroBar, edit the file and start RetroBar again.</s:String>
+    <s:String x:Key="retrobar_tab">RetroBar</s:String>
+    <s:String x:Key="customize_layout">Customize _layout...</s:String>
+    <s:String x:Key="task_buttons_alignment">Task _buttons:</s:String>
+    <s:String x:Key="toolbar_open_folder">_Open Folder</s:String>
+    <s:String x:Key="stagger_task_buttons">Stagger _rows of task buttons</s:String>
+    <s:String x:Key="stagger_task_buttons_tip">With several full rows, the buttons of each row are shifted like keyboard keys, so the rows are easier to tell apart. The rows keep their width.</s:String>
+    <x:Array x:Key="task_buttons_alignment_values" Type="s:String">
+        <s:String>Start</s:String>
+        <s:String>Center</s:String>
+        <s:String>End</s:String>
+    </x:Array>
+    <s:String x:Key="layout_item_start">_Start button</s:String>
+    <s:String x:Key="layout_item_quick_launch">_Quick Launch</s:String>
+    <s:String x:Key="layout_item_notify_icons">_Notification icons (tray area)</s:String>
+    <s:String x:Key="layout_item_clock">Cloc_k</s:String>
+    <s:String x:Key="layout_item_show_desktop">&quot;Show _Desktop&quot; button</s:String>
+    <s:String x:Key="layout_item_input_language">Input _language</s:String>
+    <s:String x:Key="taskbar_layout_scale">Sc_ale (%):</s:String>
+    <s:String x:Key="taskbar_layout_scale_tip">Size of the whole taskbar, from 100% to 200%. Sizes in bold give the sharpest result.</s:String>
+    <s:String x:Key="quick_launch_icon_size">Icon si_ze:</s:String>
+    <s:String x:Key="quick_launch_icon_size_tip">Size of the Quick Launch icons in pixels (16 = normal). Sizes in bold (16, 32, 48, 256) are the sharpest: Windows has them ready. Icons taller than a row leave room for fewer rows of icons; icons that do not fit are hidden.</s:String>
+    <s:String x:Key="configure_taskbars_separately">_Configure each taskbar separately</s:String>
+    <s:String x:Key="quick_launch_fill_columns_first">Fill Quick Launch _columns first (top to bottom)</s:String>
+    <s:String x:Key="quick_launch_fill_rows_first">Fill Quick Launch _rows first (left to right)</s:String>
+    <s:String x:Key="quick_launch_position">Quick Launch _position:</s:String>
+    <s:String x:Key="quick_launch_position_tip">An own row needs at least two rows (or a width of two on vertical taskbars): choosing it adds a row, and going back to one row moves the Quick Launch to the start of the taskbar.</s:String>
+    <x:Array x:Key="quick_launch_position_values" Type="s:String">
+        <s:String>Start of the taskbar</s:String>
+        <s:String>End of the taskbar</s:String>
+        <s:String>Own row, screen edge</s:String>
+        <s:String>Own row, screen center</s:String>
+    </x:Array>
     <s:String x:Key="show_badges">Show _badges</s:String>
     <s:String x:Key="show_window_previews">Show _window previews (thumbnails)</s:String>
     <s:String x:Key="use_software_rendering">_Use software rendering</s:String>
@@ -71,7 +113,7 @@
     <s:String x:Key="task_wheel_action">_Mouse wheel action:</s:String>
     <x:Array x:Key="task_wheel_action_values" Type="s:String">
         <s:String>Do nothing</s:String>
-        <s:String>Show/hide window</s:String>
+        <s:String>Minimize/restore window</s:String>
     </x:Array>
     <s:String x:Key="auto_hide_transparent">Hide _taskbar line when hidden with auto-hide</s:String>
     <s:String x:Key="version">Version {0}</s:String>

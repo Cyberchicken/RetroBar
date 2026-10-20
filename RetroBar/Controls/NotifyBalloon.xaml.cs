@@ -1,4 +1,4 @@
-﻿using ManagedShell.AppBar;
+using ManagedShell.AppBar;
 using ManagedShell.Common.Helpers;
 using ManagedShell.WindowsTray;
 using RetroBar.Utilities;
@@ -47,7 +47,7 @@ namespace RetroBar.Controls
 
             DpiScale dpiScale = VisualTreeHelper.GetDpi(this);
 
-            switch (Settings.Instance.Edge)
+            switch (TaskbarContext.GetEdge(this))
             {
                 case AppBarEdge.Top:
                     if (FlowDirection == FlowDirection.LeftToRight)

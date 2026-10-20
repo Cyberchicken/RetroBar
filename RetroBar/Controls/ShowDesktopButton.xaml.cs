@@ -1,4 +1,4 @@
-﻿using ManagedShell.Common.Helpers;
+using ManagedShell.Common.Helpers;
 using ManagedShell.Interop;
 using ManagedShell.WindowsTasks;
 using RetroBar.Utilities;
@@ -43,7 +43,7 @@ namespace RetroBar.Controls
 
         private void SetIconSize()
         {
-            if (DpiHelper.DpiScale > 1 || Settings.Instance.TaskbarScale > 1)
+            if (DpiHelper.DpiScale > 1 || TaskbarContext.GetScale(this) > 1)
             {
                 ShowDesktopIcon.Source = (System.Windows.Media.ImageSource)FindResource("ShowDesktopIconImageLarge");
             }

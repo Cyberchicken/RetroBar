@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Controls;
 using System.Windows.Data;
 using ManagedShell.AppBar;
@@ -11,6 +11,12 @@ namespace RetroBar.Converters
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            // Bound to the hosting window's orientation, which can differ per monitor
+            if (value is Orientation windowOrientation)
+            {
+                return windowOrientation;
+            }
+
             if (Settings.Instance.Edge == AppBarEdge.Left || Settings.Instance.Edge == AppBarEdge.Right)
             {
                 return Orientation.Vertical;

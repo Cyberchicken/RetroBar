@@ -1,4 +1,4 @@
-﻿using ManagedShell.AppBar;
+using ManagedShell.AppBar;
 using ManagedShell.Common.Helpers;
 using ManagedShell.Common.Logging;
 using ManagedShell.Common.SupportingClasses;
@@ -184,7 +184,9 @@ namespace RetroBar.Utilities
             GetWindowRect(_taskbarHwndActivated, out ManagedShell.Interop.NativeMethods.Rect taskbarRect);
 
             int x = 0, y = 0;
-            switch (Settings.Instance.Edge)
+            // Edge of the taskbar whose Start button opened the menu
+            AppBarEdge edge = (System.Windows.Interop.HwndSource.FromHwnd(_taskbarHwndActivated)?.RootVisual as Taskbar)?.AppBarEdge ?? Settings.Instance.Edge;
+            switch (edge)
             {
                 case AppBarEdge.Left:
                     // Top right of taskbar is menu top left

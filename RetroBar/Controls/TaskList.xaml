@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="RetroBar.Controls.TaskList"
+<UserControl x:Class="RetroBar.Controls.TaskList"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
              xmlns:local="clr-namespace:RetroBar.Controls"
@@ -36,13 +36,14 @@
                           dd:DragDrop.DragDropContext="TaskList">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Style="{DynamicResource TaskListWrapPanel}">
-                            <WrapPanel.Orientation>
+                        <local:AlignedWrapPanel Style="{DynamicResource TaskListWrapPanel}"
+                                               LineAlignment="{Binding Path=ButtonsAlignment, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:TaskList}}">
+                            <local:AlignedWrapPanel.Orientation>
                                 <Binding Converter="{StaticResource orientationConverter}"
                                          Path="Orientation"
                                          RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" />
-                            </WrapPanel.Orientation>
-                        </WrapPanel>
+                            </local:AlignedWrapPanel.Orientation>
+                        </local:AlignedWrapPanel>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -54,6 +55,8 @@
                                     <Binding Path="ButtonWidth" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=local:TaskList}" />
                                     <Binding Path="ExtraWidthCount" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=local:TaskList}" />
                                     <Binding Path="ButtonsPerRow" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=local:TaskList}" />
+                                    <Binding Path="StaggerActive" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=local:TaskList}" />
+                                    <Binding Path="AlternationCount" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}" />
                                 </MultiBinding>
                             </local:TaskButton.Width>
                         </local:TaskButton>

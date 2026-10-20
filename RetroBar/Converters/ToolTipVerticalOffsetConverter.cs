@@ -1,4 +1,4 @@
-﻿using ManagedShell.AppBar;
+using ManagedShell.AppBar;
 using RetroBar.Utilities;
 using System;
 using System.Globalization;
@@ -18,11 +18,15 @@ namespace RetroBar.Converters
                 return double.NaN;
             }
 
-            if (Settings.Instance.Edge == AppBarEdge.Left || Settings.Instance.Edge == AppBarEdge.Right)
+            // Edge and scale of the taskbar hosting the placement target, when it is passed
+            DependencyObject target = TaskbarContext.FindElement(values);
+
+            if (TaskbarContext.IsVertical(target))
             {
                 double placementTargetHeight = (double)values[0];
                 double toolTipHeight = (double)values[1];
-                return (placementTargetHeight / 2.0) - (toolTipHeight / 2.0 / (double)values[2]);
+                double scale = target != null && "taskbar".Equals(parameter) ? TaskbarContext.GetScale(target) : (double)values[2];
+                return (placementTargetHeight / 2.0) - (toolTipHeight / 2.0 / scale);
             }
             else
             {

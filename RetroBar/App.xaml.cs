@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ManagedShell;
 using RetroBar.Utilities;
 using System.Windows;
@@ -99,7 +99,7 @@ namespace RetroBar
 
         private void setTaskIconSize()
         {
-            bool useLargeIcons = Settings.Instance.TaskbarScale > 1 || (FindResource("UseLargeIcons") as bool? ?? false);
+            bool useLargeIcons = Settings.Instance.TaskbarScale > 1 || Settings.Instance.MonitorOverrides.Exists(o => o?.TaskbarScale > 1) || (FindResource("UseLargeIcons") as bool? ?? false);
 
             if (_shellManager.TasksService.TaskIconSize != IconSize.Small != useLargeIcons)
             {

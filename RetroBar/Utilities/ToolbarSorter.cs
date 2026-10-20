@@ -18,7 +18,8 @@ namespace RetroBar.Utilities
         {
             if (x is ShellItem a && y is ShellItem b)
             {
-                List<string> desiredSort = Settings.Instance.QuickLaunchOrder;
+                // Only this toolbar's folder: drop positions are relative to its items
+                List<string> desiredSort = _toolbar.GetDesiredOrder();
 
                 // If reordering, modify the desired sort to reflect the in-flight drop.
                 if (_toolbar.DropHandler.DropInFlight != null && 

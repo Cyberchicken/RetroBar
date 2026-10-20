@@ -11,15 +11,18 @@ namespace RetroBar.Converters
     {
         public object Convert(object[] value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (Settings.Instance.Edge == AppBarEdge.Left)
+            // Edge of the taskbar hosting the placement target, when it is passed
+            AppBarEdge edge = TaskbarContext.GetEdge(TaskbarContext.FindElement(value));
+
+            if (edge == AppBarEdge.Left)
             {
                 return PlacementMode.Right;
             }
-            else if (Settings.Instance.Edge == AppBarEdge.Right)
+            else if (edge == AppBarEdge.Right)
             {
                 return PlacementMode.Left;
             }
-            else if (Settings.Instance.Edge == AppBarEdge.Top)
+            else if (edge == AppBarEdge.Top)
             {
                 return PlacementMode.Bottom;
             }

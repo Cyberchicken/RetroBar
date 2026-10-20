@@ -35,6 +35,37 @@ namespace RetroBar.Controls
 
         private bool _isLoaded;
 
+        // Per-monitor override of Settings.ShowInputLanguage; null follows the global setting.
+        public static readonly DependencyProperty ShowOverrideProperty = DependencyProperty.Register(nameof(ShowOverride), typeof(bool?), typeof(InputLanguage), new PropertyMetadata(null, OnShowOverrideChanged));
+
+        public bool? ShowOverride
+        {
+            get => (bool?)GetValue(ShowOverrideProperty);
+            set => SetValue(ShowOverrideProperty, value);
+        }
+
+        private bool ShouldShow => ShowOverride ?? Settings.Instance.ShowInputLanguage;
+
+        private static void OnShowOverrideChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is InputLanguage inputLanguage && inputLanguage._isLoaded)
+            {
+                inputLanguage.UpdateVisibility();
+            }
+        }
+
+        private void UpdateVisibility()
+        {
+            if (ShouldShow)
+            {
+                StartWatch();
+            }
+            else
+            {
+                StopWatch();
+            }
+        }
+
         public InputLanguage()
         {
             InitializeComponent();
@@ -46,7 +77,7 @@ namespace RetroBar.Controls
 
         private void Initialize()
         {
-            if (Settings.Instance.ShowInputLanguage)
+            if (ShouldShow)
             {
                 StartWatch();
             }
@@ -157,14 +188,7 @@ namespace RetroBar.Controls
         {
             if (e.PropertyName == nameof(Settings.ShowInputLanguage))
             {
-                if (Settings.Instance.ShowInputLanguage)
-                {
-                    StartWatch();
-                }
-                else
-                {
-                    StopWatch();
-                }
+                UpdateVisibility();
             }
         }
 

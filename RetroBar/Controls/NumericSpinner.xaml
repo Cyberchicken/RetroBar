@@ -1,0 +1,47 @@
+<UserControl x:Class="RetroBar.Controls.NumericSpinner"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <!-- [ - ] value [ + ]: buttons as tall as the box, easy to hit -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <RepeatButton x:Name="DownButton"
+                      Grid.Column="0"
+                      Width="21"
+                      Padding="0"
+                      Focusable="False"
+                      Click="DownButton_Click">
+            <Path Data="M 0 0 L 8 0"
+                  Stroke="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=RepeatButton}}"
+                  StrokeThickness="2"
+                  VerticalAlignment="Center" />
+        </RepeatButton>
+        <TextBox x:Name="ValueTextBox"
+                 Grid.Column="1"
+                 Margin="2,0"
+                 VerticalContentAlignment="Center"
+                 HorizontalContentAlignment="Center"
+                 Padding="2,0"
+                 PreviewTextInput="ValueTextBox_PreviewTextInput"
+                 TextChanged="ValueTextBox_TextChanged"
+                 PreviewKeyDown="ValueTextBox_PreviewKeyDown"
+                 MouseWheel="ValueTextBox_MouseWheel"
+                 LostFocus="ValueTextBox_LostFocus" />
+        <RepeatButton x:Name="UpButton"
+                      Grid.Column="2"
+                      Width="21"
+                      Padding="0"
+                      Focusable="False"
+                      Click="UpButton_Click">
+            <Path Data="M 0 4 L 8 4 M 4 0 L 4 8"
+                  Stroke="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=RepeatButton}}"
+                  StrokeThickness="2"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Center" />
+        </RepeatButton>
+    </Grid>
+</UserControl>

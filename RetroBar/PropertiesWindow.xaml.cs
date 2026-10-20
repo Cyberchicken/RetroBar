@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -82,9 +82,7 @@ namespace RetroBar
             LoadAutoStart();
             LoadLanguages();
             LoadOSSupport();
-            LoadRows();
             LoadThemes();
-            LoadWidth();
             LoadAppInfo();
             LoadClockActions();
 
@@ -180,15 +178,6 @@ namespace RetroBar
             if (!EnvironmentHelper.IsWindows10OrBetter)
             {
                 cbAllowBlurBehind.Visibility = Visibility.Collapsed;
-                cbShowStartButtonMultiMon.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void LoadRows()
-        {
-            for (int i = 1; i <= Settings.Instance.RowLimit; i++)
-            {
-                cboRowCount.Items.Add(i.ToString());
             }
         }
 
@@ -198,10 +187,6 @@ namespace RetroBar
             txtVersion.Text = string.Format((string)FindResource("version"), System.Windows.Forms.Application.ProductVersion);
         }
 
-        private void LoadWidth()
-        {
-            sldTaskbarWidth.Maximum = Settings.Instance.TaskbarWidthLimit;
-        }
 
         private void LoadThemes()
         {
@@ -304,21 +289,6 @@ namespace RetroBar
             Close();
         }
 
-        private void SetQuickLaunchLocation_OnClick(object sender, RoutedEventArgs e)
-        {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            fbd.Description = (string)FindResource("quick_launch_folder");
-#if NETCOREAPP3_0_OR_GREATER
-            fbd.UseDescriptionForTitle = true;
-#endif
-            fbd.ShowNewFolderButton = false;
-            fbd.SelectedPath = Settings.Instance.QuickLaunchPath;
-
-            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                Settings.Instance.QuickLaunchPath = fbd.SelectedPath;
-            }
-        }
 
         private void PropertiesWindow_OnClosing(object sender, CancelEventArgs e)
         {
@@ -332,8 +302,36 @@ namespace RetroBar
             Settings.Instance.PropertyChanged -= Settings_PropertyChanged;
         }
 
+        // Makes all tabs as tall as the tallest one, so the window does not change size when switching tabs
+        private void EqualizeTabHeights()
+        {
+            int selected = PropertiesTabs.SelectedIndex;
+            double maxHeight = 0;
+
+            foreach (object item in PropertiesTabs.Items)
+            {
+                if (item is System.Windows.Controls.TabItem tab && tab.Content is FrameworkElement content)
+                {
+                    content.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                    maxHeight = Math.Max(maxHeight, content.DesiredSize.Height);
+                }
+            }
+
+            foreach (object item in PropertiesTabs.Items)
+            {
+                if (item is System.Windows.Controls.TabItem tab && tab.Content is FrameworkElement content)
+                {
+                    // Desired size includes the content's margin
+                    content.MinHeight = Math.Max(0, maxHeight - content.Margin.Top - content.Margin.Bottom);
+                }
+            }
+
+            PropertiesTabs.SelectedIndex = selected;
+        }
+
         private void PropertiesWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
+            EqualizeTabHeights();
             Left = 10;
             Top = (ScreenHelper.PrimaryMonitorDeviceSize.Height / DpiHelper.DpiScale) - Height - 40;
             UpdateWindowPosition();
@@ -386,13 +384,6 @@ namespace RetroBar
             cboClockAction.ItemsSource = availableClockActions;
         }
 
-        private void CboEdgeSelect_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            if (cboEdgeSelect.SelectedItem == null)
-            {
-                cboEdgeSelect.SelectedValue = cboEdgeSelect.Items[(int)Settings.Instance.Edge];
-            }
-        }
 
         private void CboMultiMonMode_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
@@ -434,12 +425,9 @@ namespace RetroBar
             }
         }
 
-        private void CboRowCount_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void TaskbarLayout_OnClick(object sender, RoutedEventArgs e)
         {
-            if (cboRowCount.SelectedItem == null)
-            {
-                cboRowCount.SelectedValue = cboRowCount.Items[Settings.Instance.RowCount - 1];
-            }
+            TaskbarLayoutWindow.Open(this, _screen, new Point(Left, Top));
         }
 
         private void CboWinNumHotkeysAction_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

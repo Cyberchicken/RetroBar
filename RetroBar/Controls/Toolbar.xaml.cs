@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -32,14 +32,38 @@ namespace RetroBar.Controls
         public string Path
         {
             get => (string)GetValue(PathProperty);
-            set
-            {
-                SetValue(PathProperty, value);
-                SetupFolder(value);
-            }
+            // OnPathChanged sets up the folder (doing it here too would create it twice)
+            set => SetValue(PathProperty, value);
         }
 
         private static DependencyProperty FolderProperty = DependencyProperty.Register(nameof(Folder), typeof(ShellFolder), typeof(Toolbar));
+
+        // True when the toolbar has a row of its own: its icons then stay on one line.
+        public static DependencyProperty SingleRowProperty = DependencyProperty.Register(nameof(SingleRow), typeof(bool), typeof(Toolbar), new PropertyMetadata(false));
+
+        public bool SingleRow
+        {
+            get => (bool)GetValue(SingleRowProperty);
+            set => SetValue(SingleRowProperty, value);
+        }
+
+        // Fill the other way than the default: rows first on horizontal taskbars, columns first on vertical ones.
+        public static DependencyProperty FillAcrossProperty = DependencyProperty.Register(nameof(FillAcross), typeof(bool), typeof(Toolbar), new PropertyMetadata(false));
+
+        public bool FillAcross
+        {
+            get => (bool)GetValue(FillAcrossProperty);
+            set => SetValue(FillAcrossProperty, value);
+        }
+
+        // Size in pixels of the icons on this toolbar.
+        public static DependencyProperty IconSizeProperty = DependencyProperty.Register(nameof(IconSize), typeof(int), typeof(Toolbar), new PropertyMetadata(ToolbarButton.DefaultIconSize));
+
+        public int IconSize
+        {
+            get => (int)GetValue(IconSizeProperty);
+            set => SetValue(IconSizeProperty, value);
+        }
 
         public static DependencyProperty HostProperty = DependencyProperty.Register(nameof(Host), typeof(Taskbar), typeof(Toolbar), new PropertyMetadata(HostChangedCallback));
 
@@ -99,6 +123,13 @@ namespace RetroBar.Controls
 
         private void SetupFolder(string path)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                // The taskbar sets the folder (it can differ per taskbar)
+                UnloadFolder();
+                return;
+            }
+
             Folder?.Dispose();
             Folder = new ShellFolder(Environment.ExpandEnvironmentVariables(path), IntPtr.Zero, true);
         }
@@ -119,9 +150,31 @@ namespace RetroBar.Controls
             }
         }
 
+        // Whether a saved Quick Launch path belongs to this toolbar's folder (taskbars can use different folders)
+        private bool IsInThisFolder(string itemPath)
+        {
+            try
+            {
+                string folder = System.IO.Path.GetFullPath(Environment.ExpandEnvironmentVariables(Path ?? "")).TrimEnd('\\');
+                string itemFolder = System.IO.Path.GetDirectoryName(itemPath)?.TrimEnd('\\');
+                return string.Equals(folder, itemFolder, StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        // The saved order of the items of this toolbar's folder (a copy)
+        public List<string> GetDesiredOrder()
+        {
+            return Settings.Instance.QuickLaunchOrder.Where(IsInThisFolder).ToList();
+        }
+
         public void SaveItemOrder()
         {
-            List<string> itemPaths = new List<string>();
+            // Keep the order saved for other folders
+            List<string> itemPaths = Settings.Instance.QuickLaunchOrder.Where(p => !IsInThisFolder(p)).ToList();
 
             foreach (ShellFile file in ((ListCollectionView)CollectionViewSource.GetDefaultView(Folder.Files)).OfType<ShellFile>())
             {
@@ -278,6 +331,14 @@ namespace RetroBar.Controls
             
             var _ = new ShellItemContextMenu(new ShellItem[] { file }, Folder, IntPtr.Zero, HandleFileAction, isInteractive, false, new ShellMenuCommandBuilder(), GetFileCommandBuilder(file));
             return true;
+        }
+
+        private void OpenFolderMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (Folder != null)
+            {
+                ShellHelper.StartProcess(Folder.Path);
+            }
         }
 
         private bool HandleFileAction(string action, ShellItem[] items, bool allFolders)

@@ -1,0 +1,253 @@
+<Window x:Class="RetroBar.TaskbarLayoutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:RetroBar.Controls"
+        Title="{DynamicResource taskbar_layout_title}"
+        Icon="Resources/retrobar.ico"
+        Width="Auto"
+        Height="Auto"
+        MinWidth="300"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        ShowInTaskbar="False"
+        FlowDirection="{DynamicResource flow_direction}"
+        Style="{DynamicResource PropertiesWindow}"
+        Closing="Window_Closing">
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style TargetType="{x:Type ComboBox}">
+                <Setter Property="HorizontalAlignment"
+                        Value="Right" />
+                <Setter Property="IsEditable"
+                        Value="False" />
+                <Setter Property="Margin"
+                        Value="5,5,0,5" />
+                <Setter Property="VerticalContentAlignment"
+                        Value="Center" />
+                <Setter Property="MinHeight"
+                        Value="21" />
+                <Setter Property="Width"
+                        Value="150" />
+            </Style>
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Padding"
+                        Value="0" />
+            </Style>
+            <Style TargetType="{x:Type CheckBox}">
+                <Style.Resources>
+                    <Style TargetType="{x:Type Label}">
+                        <Setter Property="Padding"
+                                Value="1,2,0,0" />
+                    </Style>
+                </Style.Resources>
+                <Setter Property="Margin"
+                        Value="0,5,5,5" />
+                <Setter Property="Padding"
+                        Value="0" />
+            </Style>
+            <Style TargetType="{x:Type GroupBox}">
+                <Setter Property="Padding"
+                        Value="5,5,5,0" />
+            </Style>
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="MinHeight"
+                        Value="21" />
+                <Setter Property="MinWidth"
+                        Value="73" />
+                <Setter Property="Padding"
+                        Value="10,0" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Margin="7">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <!-- Same side margins as the content of the group box below -->
+        <StackPanel Grid.Row="0"
+                    Margin="7,0,7,0"
+                    Orientation="Vertical">
+            <DockPanel x:Name="MonitorPanel">
+                <Label VerticalAlignment="Center"
+                       Target="{Binding ElementName=cboMonitor}">
+                    <AccessText Text="{DynamicResource taskbar_layout_monitor}" />
+                </Label>
+                <ComboBox x:Name="cboMonitor"
+                          Width="200"
+                          SelectionChanged="CboMonitor_SelectionChanged" />
+            </DockPanel>
+            <DockPanel>
+                <Label VerticalAlignment="Center"
+                       Target="{Binding ElementName=cboEdge}">
+                    <AccessText Text="{DynamicResource location_text}"
+                                ToolTip="{DynamicResource location_tip}" />
+                </Label>
+                <ComboBox x:Name="cboEdge"
+                          Width="120"
+                          ItemsSource="{DynamicResource location_values}"
+                          SelectionChanged="CboEdge_SelectionChanged" />
+            </DockPanel>
+            <DockPanel x:Name="RowsPanel">
+                <Label VerticalAlignment="Center"
+                       Target="{Binding ElementName=spnRowCount}">
+                    <AccessText Text="{DynamicResource rowcount_text}"
+                                ToolTip="{DynamicResource rowcount_tip}" />
+                </Label>
+                <controls:NumericSpinner x:Name="spnRowCount"
+                                         ToolTip="{DynamicResource taskbar_layout_rows_limit_tip}"
+                                         HorizontalAlignment="Right"
+                                         Width="90"
+                                         Height="21"
+                                         Margin="5,5,0,5"
+                                         Minimum="1"
+                                         ValueChangedByUser="SpnRowCount_ValueChangedByUser" />
+            </DockPanel>
+            <DockPanel x:Name="WidthPanel">
+                <Label VerticalAlignment="Center"
+                       Target="{Binding ElementName=spnTaskbarWidth}">
+                    <AccessText Text="{DynamicResource taskbar_width}" />
+                </Label>
+                <controls:NumericSpinner x:Name="spnTaskbarWidth"
+                                         ToolTip="{DynamicResource taskbar_layout_width_limit_tip}"
+                                         HorizontalAlignment="Right"
+                                         Width="90"
+                                         Height="21"
+                                         Margin="5,5,0,5"
+                                         Minimum="1"
+                                         ValueChangedByUser="SpnTaskbarWidth_ValueChangedByUser" />
+            </DockPanel>
+            <DockPanel>
+                <Label VerticalAlignment="Center"
+                       Target="{Binding ElementName=spnTaskbarScale}">
+                    <AccessText Text="{DynamicResource taskbar_layout_scale}"
+                                ToolTip="{DynamicResource taskbar_layout_scale_tip}" />
+                </Label>
+                <controls:NumericSpinner x:Name="spnTaskbarScale"
+                                         ToolTip="{DynamicResource taskbar_layout_scale_tip}"
+                                         HorizontalAlignment="Right"
+                                         Width="90"
+                                         Height="21"
+                                         Margin="5,5,0,5"
+                                         Minimum="100"
+                                         Maximum="200"
+                                         HighlightedValues="100,125,150,200"
+                                         ValueChangedByUser="SpnTaskbarScale_ValueChangedByUser" />
+            </DockPanel>
+            <CheckBox x:Name="cbAutoHide"
+                      Click="CheckBox_Click">
+                <Label Content="{DynamicResource enable_auto_hide}" />
+            </CheckBox>
+            <DockPanel>
+                <Label VerticalAlignment="Center"
+                       Target="{Binding ElementName=cboTaskButtonsAlignment}">
+                    <AccessText Text="{DynamicResource task_buttons_alignment}" />
+                </Label>
+                <ComboBox x:Name="cboTaskButtonsAlignment"
+                          Width="120"
+                          ItemsSource="{DynamicResource task_buttons_alignment_values}"
+                          SelectionChanged="CboTaskButtonsAlignment_SelectionChanged" />
+            </DockPanel>
+            <CheckBox x:Name="cbStaggerTaskButtons"
+                      Click="CheckBox_Click">
+                <Label Content="{DynamicResource stagger_task_buttons}"
+                       ToolTip="{DynamicResource stagger_task_buttons_tip}" />
+            </CheckBox>
+        </StackPanel>
+        <GroupBox Grid.Row="1"
+                  Header="{DynamicResource taskbar_layout_items}">
+            <StackPanel Orientation="Vertical">
+                <CheckBox x:Name="cbShowStartButton"
+                          Click="CheckBox_Click">
+                    <Label Content="{DynamicResource layout_item_start}" />
+                </CheckBox>
+                <CheckBox x:Name="cbShowStartButtonMultiMon"
+                          Margin="16,0,5,5"
+                          Click="CheckBox_Click">
+                    <Label Content="{DynamicResource show_start_button_multi_mon}" />
+                </CheckBox>
+                <CheckBox x:Name="cbShowQuickLaunch"
+                          Click="CheckBox_Click">
+                    <Label Content="{DynamicResource layout_item_quick_launch}" />
+                </CheckBox>
+                <!-- Quick Launch options, right under its check box -->
+                <GroupBox Margin="16,0,0,4"
+                          Padding="5,5,5,0">
+                        <StackPanel Orientation="Vertical"
+                                    IsEnabled="{Binding ElementName=cbShowQuickLaunch, Path=IsChecked}">
+                            <!-- The label says rows or columns depending on the taskbar's orientation -->
+                            <CheckBox x:Name="cbQuickLaunchFillRowsFirst"
+                                      Margin="0,0,5,5"
+                                      Click="CheckBox_Click">
+                                <Label x:Name="lblQuickLaunchFill"
+                                       Content="{DynamicResource quick_launch_fill_rows_first}" />
+                            </CheckBox>
+                            <DockPanel>
+                                <Label VerticalAlignment="Center"
+                                       Target="{Binding ElementName=cboQuickLaunchPosition}">
+                                    <AccessText Text="{DynamicResource quick_launch_position}"
+                                                ToolTip="{DynamicResource quick_launch_position_tip}" />
+                                </Label>
+                                <ComboBox x:Name="cboQuickLaunchPosition"
+                                          Width="170"
+                                          Margin="5,0,0,5"
+                                          ItemsSource="{DynamicResource quick_launch_position_values}"
+                                          SelectionChanged="CboQuickLaunchPosition_SelectionChanged" />
+                            </DockPanel>
+                            <DockPanel>
+                                <Label VerticalAlignment="Center"
+                                       Target="{Binding ElementName=spnQuickLaunchIconSize}">
+                                    <AccessText Text="{DynamicResource quick_launch_icon_size}"
+                                                ToolTip="{DynamicResource quick_launch_icon_size_tip}" />
+                                </Label>
+                                <controls:NumericSpinner x:Name="spnQuickLaunchIconSize"
+                                                         HorizontalAlignment="Right"
+                                                         Width="90"
+                                                         Height="21"
+                                                         Margin="5,0,0,5"
+                                                         Minimum="8"
+                                                         Maximum="256"
+                                                         HighlightedValues="16,32,48,256"
+                                                         ValueChangedByUser="SpnQuickLaunchIconSize_ValueChangedByUser" />
+                            </DockPanel>
+                            <DockPanel>
+                                <Label VerticalAlignment="Center"
+                                       Content="{DynamicResource quick_launch_location}" />
+                                <Button x:Name="btnQuickLaunchFolder"
+                                        HorizontalAlignment="Right"
+                                        Margin="5,0,0,5"
+                                        Content="{DynamicResource select_location}"
+                                        Click="QuickLaunchFolder_OnClick" />
+                            </DockPanel>
+                        </StackPanel>
+                </GroupBox>
+                <CheckBox x:Name="cbShowInputLanguage"
+                          Click="CheckBox_Click">
+                    <Label Content="{DynamicResource layout_item_input_language}" />
+                </CheckBox>
+                <CheckBox x:Name="cbShowNotifyIcons"
+                          Click="CheckBox_Click">
+                    <Label Content="{DynamicResource layout_item_notify_icons}" />
+                </CheckBox>
+                <CheckBox x:Name="cbShowClock"
+                          Click="CheckBox_Click">
+                    <Label Content="{DynamicResource layout_item_clock}" />
+                </CheckBox>
+                <CheckBox x:Name="cbShowDesktopButton"
+                          Click="CheckBox_Click">
+                    <Label Content="{DynamicResource layout_item_show_desktop}" />
+                </CheckBox>
+            </StackPanel>
+        </GroupBox>
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,7,0,0">
+            <Button Content="{DynamicResource ok_dialog}"
+                    IsDefault="True"
+                    IsCancel="True"
+                    Click="OK_OnClick" />
+        </StackPanel>
+    </Grid>
+</Window>
