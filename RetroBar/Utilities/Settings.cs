@@ -340,6 +340,13 @@ namespace RetroBar.Utilities
             set => Set(ref _quickLaunchOrder, value);
         }
 
+        private QuickLaunchPositionOption _quickLaunchPosition = QuickLaunchPositionOption.StartOfTaskbar;
+        public QuickLaunchPositionOption QuickLaunchPosition
+        {
+            get => _quickLaunchPosition;
+            set => SetEnum(ref _quickLaunchPosition, value);
+        }
+
         private bool _showTaskThumbnails = false;
         public bool ShowTaskThumbnails
         {
@@ -565,6 +572,14 @@ namespace RetroBar.Utilities
         OpenAeroCalendar,
         OpenModernCalendar,
         OpenNotificationCenter,
+    }
+
+    public enum QuickLaunchPositionOption
+    {
+        StartOfTaskbar,     // Next to the Start button
+        EndOfTaskbar,       // Next to the notification area
+        OwnRowScreenEdge,   // Own row (or column) between the task buttons and the screen edge
+        OwnRowScreenCenter  // Own row (or column) between the task buttons and the screen center
     }
 
     public enum WinNumHotkeysOption
