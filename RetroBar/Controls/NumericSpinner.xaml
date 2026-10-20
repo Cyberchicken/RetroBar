@@ -17,6 +17,7 @@
                  HorizontalContentAlignment="Right"
                  Padding="2,0"
                  PreviewTextInput="ValueTextBox_PreviewTextInput"
+                 TextChanged="ValueTextBox_TextChanged"
                  PreviewKeyDown="ValueTextBox_PreviewKeyDown"
                  MouseWheel="ValueTextBox_MouseWheel"
                  LostFocus="ValueTextBox_LostFocus" />

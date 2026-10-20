@@ -72,11 +72,22 @@ namespace RetroBar.Controls
             spinner.UpdateDisplay();
         }
 
+        private bool _isUpdatingDisplay;
+
         private void UpdateDisplay()
         {
-            ValueTextBox.Text = Value.ToString();
             UpButton.IsEnabled = Value < Maximum;
             DownButton.IsEnabled = Value > Minimum;
+
+            // Don't rewrite the text while the user is typing a valid value (it would move the caret)
+            if (ValueTextBox.IsKeyboardFocused && int.TryParse(ValueTextBox.Text, out int typed) && typed == Value)
+            {
+                return;
+            }
+
+            _isUpdatingDisplay = true;
+            ValueTextBox.Text = Value.ToString();
+            _isUpdatingDisplay = false;
         }
 
         private void SetByUser(int value)
@@ -134,8 +145,26 @@ namespace RetroBar.Controls
                     e.Handled = true;
                     break;
                 case Key.Enter:
+                    // Keep Enter in the box: it must not press the dialog's default button
                     CommitText();
+                    e.Handled = true;
                     break;
+            }
+        }
+
+        // Apply a typed number right away, so the taskbar previews it while typing
+        private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isUpdatingDisplay || !ValueTextBox.IsKeyboardFocused)
+            {
+                return;
+            }
+
+            if (int.TryParse(ValueTextBox.Text, out int typed) && typed >= Minimum && typed <= Maximum && typed != Value)
+            {
+                _isUserChange = true;
+                Value = typed;
+                _isUserChange = false;
             }
         }
 
