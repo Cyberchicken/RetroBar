@@ -37,7 +37,7 @@
     <s:String x:Key="select_location">Cam_bia cartella...</s:String>
     <s:String x:Key="quick_launch_folder">Avvio veloce - Selezione cartella</s:String>
     <s:String x:Key="quick_launch_position">_Posizione di Avvio veloce:</s:String>
-    <s:String x:Key="quick_launch_position_tip">Una riga propria richiede almeno due righe (o larghezza due sulle barre verticali); altrimenti Avvio veloce resta all'inizio della barra.</s:String>
+    <s:String x:Key="quick_launch_position_tip">Una riga propria richiede almeno due righe (o larghezza due sulle barre verticali): sceglierla aggiunge una riga, e tornare a una riga riporta Avvio veloce all'inizio della barra.</s:String>
     <x:Array x:Key="quick_launch_position_values" Type="s:String">
         <s:String>Inizio della barra</s:String>
         <s:String>Fine della barra</s:String>

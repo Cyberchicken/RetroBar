@@ -309,7 +309,15 @@ namespace RetroBar.Utilities
         public int RowCount
         {
             get => _rowCount;
-            set => Set(ref _rowCount, value);
+            set
+            {
+                Set(ref _rowCount, value);
+
+                if (value < 2 && Edge is AppBarEdge.Top or AppBarEdge.Bottom)
+                {
+                    LeaveQuickLaunchOwnRow();
+                }
+            }
         }
 
         private int _rowLimit = 5;
@@ -323,7 +331,25 @@ namespace RetroBar.Utilities
         public int TaskbarWidth
         {
             get => _taskbarWidth;
-            set => Set(ref _taskbarWidth, value);
+            set
+            {
+                Set(ref _taskbarWidth, value);
+
+                if (value < 2 && Edge is AppBarEdge.Left or AppBarEdge.Right)
+                {
+                    LeaveQuickLaunchOwnRow();
+                }
+            }
+        }
+
+        // Without room for an own row, move the Quick Launch back to the start of the taskbar
+        // (the counterpart of adding a row when an own row is chosen).
+        private void LeaveQuickLaunchOwnRow()
+        {
+            if (!_isInitializing && _quickLaunchPosition is QuickLaunchPositionOption.OwnRowScreenEdge or QuickLaunchPositionOption.OwnRowScreenCenter)
+            {
+                QuickLaunchPosition = QuickLaunchPositionOption.StartOfTaskbar;
+            }
         }
 
         private int _taskbarWidthLimit = 7;
