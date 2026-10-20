@@ -20,10 +20,7 @@ namespace RetroBar
         {
             InitializeComponent();
 
-            for (int i = 1; i <= Settings.Instance.RowLimit; i++)
-            {
-                cboRowCount.Items.Add(i.ToString());
-            }
+            spnRowCount.Maximum = Settings.Instance.RowLimit;
 
             LoadMonitors(screen);
 
@@ -101,7 +98,7 @@ namespace RetroBar
             if (IsSeparate)
             {
                 MonitorItem monitor = SelectedMonitor;
-                cboRowCount.SelectedIndex = settings.GetRowCount(monitor.Id) - 1;
+                spnRowCount.Value = settings.GetRowCount(monitor.Id);
                 cbShowStartButton.IsChecked = settings.GetShowStartButton(monitor.Id, monitor.Primary);
                 cbShowQuickLaunch.IsChecked = settings.GetShowQuickLaunch(monitor.Id);
                 cbShowNotifyIcons.IsChecked = settings.GetShowNotifyIcons(monitor.Id);
@@ -112,7 +109,7 @@ namespace RetroBar
             }
             else
             {
-                cboRowCount.SelectedIndex = settings.RowCount - 1;
+                spnRowCount.Value = settings.RowCount;
                 cbShowStartButton.IsChecked = settings.ShowStartButton;
                 cbShowStartButtonMultiMon.IsChecked = settings.ShowStartButtonMultiMon;
                 cbShowQuickLaunch.IsChecked = settings.ShowQuickLaunch;
@@ -156,14 +153,14 @@ namespace RetroBar
             }
         }
 
-        private void CboRowCount_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void SpnRowCount_ValueChangedByUser(object sender, System.EventArgs e)
         {
-            if (_isLoading || cboRowCount.SelectedIndex < 0)
+            if (_isLoading)
             {
                 return;
             }
 
-            int rows = cboRowCount.SelectedIndex + 1;
+            int rows = spnRowCount.Value;
 
             if (IsSeparate)
             {
